@@ -56,8 +56,8 @@ const baseNotes = [
 ];
 
 const seasonColors: Record<string, string> = {
-  Spring: "#7DC352",
-  Summer: "#F45DA6",
+  Spring: "#F45DA6",
+  Summer: "#7DC352",
   Autumn: "#D2691E",
   Winter: "#87CEEB",
 };
@@ -106,6 +106,12 @@ const brandThresholds: Record<string, number> = {
   "jo-malone-london": 5,
   gucci: 11,
   default: 20,
+};
+
+const highlightColors: Record<string, string> = {
+  top: "#5F156E",
+  middle: "#5B21A2",
+  base: "#7F4CD6",
 };
 
 function RadialNetworkGraphBySeason({
@@ -224,12 +230,6 @@ function RadialNetworkGraphBySeason({
       : null;
     const hoveredNodeColor = hoveredNodeData ? hoveredNodeData.color : null;
 
-    const highlightColors: Record<string, string> = {
-      top: "#5F156E",
-      middle: "#5B21A2",
-      base: "#7F4CD6",
-    };
-
     const highlightedNotes =
       highlightCategory === "top"
         ? topNotes
@@ -331,21 +331,29 @@ export default function Page() {
 
   const [highlightCategory, setHighlightCategory] = useState<string>("none");
 
-  const buttonStyle: React.CSSProperties = {
+  const baseButtonStyle: React.CSSProperties = {
     margin: "0 10px",
     padding: "10px 20px",
-    backgroundColor: "#f0f0f0",
     border: "1px solid #ccc",
     borderRadius: "5px",
     cursor: "pointer",
     fontSize: "14px",
     transition: "background-color 0.3s",
+    opacity: 0.9,
+    color: "#fff",
   };
 
-  const activeButtonStyle: React.CSSProperties = {
-    ...buttonStyle,
-    backgroundColor: "#d0d0d0",
-    fontWeight: "bold",
+  const noteButtonStyle = (category: string): React.CSSProperties => ({
+    ...baseButtonStyle,
+    backgroundColor: highlightColors[category],
+    fontWeight: highlightCategory === category ? "bold" : "normal",
+    borderColor: highlightCategory === category ? "#000" : "#ccc"
+  });
+
+  const clearButtonStyle: React.CSSProperties = {
+    ...baseButtonStyle,
+    backgroundColor: highlightCategory === "none" ? "#d0d0d0" : "#f0f0f0",
+    color: "#000"
   };
 
   return (
@@ -372,49 +380,137 @@ export default function Page() {
         Radial Network Graph for Perfume Note
       </h2>
 
-      {/* Buttons below the main title */}
+      {/* Node Color and Note Pairing Frequency elements */}
+      <div
+        style={{
+          margin: "0 auto 20px auto",
+          width: "900px",
+          textAlign: "center",
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          justifyContent: "center",
+          gap: "40px",
+          flexWrap: "wrap"
+        }}
+      >
+        {/* Node Colors */}
+        <div style={{ textAlign: "center" }}>
+          <ul style={{ display: "flex", gap: "15px", padding: 0, listStyle: "none", justifyContent: "center", margin: 0 }}>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  borderRadius: "50%",
+                  backgroundColor: "#F45DA6",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Spring
+            </li>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  borderRadius: "50%",
+                  backgroundColor: "#7DC352",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Summer
+            </li>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  borderRadius: "50%",
+                  backgroundColor: "#D2691E",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Autumn
+            </li>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "16px",
+                  height: "16px",
+                  borderRadius: "50%",
+                  backgroundColor: "#87CEEB",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Winter
+            </li>
+          </ul>
+        </div>
+
+        {/* Note Pairing Frequency */}
+        <div style={{ textAlign: "center" }}>
+          <ul style={{ display: "flex", gap: "15px", padding: 0, listStyle: "none", justifyContent: "center", margin: 0 }}>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "40px",
+                  height: "2px",
+                  backgroundColor: "#666",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Few
+            </li>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "40px",
+                  height: "6px",
+                  backgroundColor: "#666",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Common
+            </li>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  width: "40px",
+                  height: "10px",
+                  backgroundColor: "#666",
+                  marginRight: "5px",
+                }}
+              ></div>
+              Frequent
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Buttons below the legend */}
       <div style={{ textAlign: "center", marginBottom: "20px", zIndex: 1, position: "relative" }}>
         <button
-          style={highlightCategory === "top" ? activeButtonStyle : buttonStyle}
+          style={noteButtonStyle("top")}
           onClick={() => setHighlightCategory("top")}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-          onMouseOut={(e) =>
-          (e.currentTarget.style.backgroundColor =
-            highlightCategory === "top" ? "#d0d0d0" : "#f0f0f0")
-          }
         >
           Top Note
         </button>
         <button
-          style={highlightCategory === "middle" ? activeButtonStyle : buttonStyle}
+          style={noteButtonStyle("middle")}
           onClick={() => setHighlightCategory("middle")}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-          onMouseOut={(e) =>
-          (e.currentTarget.style.backgroundColor =
-            highlightCategory === "middle" ? "#d0d0d0" : "#f0f0f0")
-          }
         >
           Middle Note
         </button>
         <button
-          style={highlightCategory === "base" ? activeButtonStyle : buttonStyle}
+          style={noteButtonStyle("base")}
           onClick={() => setHighlightCategory("base")}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-          onMouseOut={(e) =>
-          (e.currentTarget.style.backgroundColor =
-            highlightCategory === "base" ? "#d0d0d0" : "#f0f0f0")
-          }
         >
           Base Note
         </button>
         <button
-          style={highlightCategory === "none" ? activeButtonStyle : buttonStyle}
+          style={clearButtonStyle}
           onClick={() => setHighlightCategory("none")}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
-          onMouseOut={(e) =>
-          (e.currentTarget.style.backgroundColor =
-            highlightCategory === "none" ? "#d0d0d0" : "#f0f0f0")
-          }
         >
           Clear
         </button>
